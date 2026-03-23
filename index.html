@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradeOS — DD Checklist (Live)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#080810;--s1:#0e0e1a;--s2:#141424;--s3:#1c1c30;--s4:#22223a;
+  --brd:#ffffff0d;--brd2:#ffffff18;--brd3:#ffffff28;
+  --gold:#f0b429;--gold2:#c88800;
+  --grn:#00d17a;--grn2:#00a85f;--grn3:#003d20;
+  --red:#ff4d6d;--red2:#cc2244;--red3:#3d0015;
+  --blu:#4f8ef7;--blu2:#2266d4;
+  --pur:#9b6dff;--pur2:#6b3dcc;
+  --cyan:#00e5ff;--ora:#ff8c00;--pink:#ff6eb4;
+  --txt:#eeedf8;--txt2:#7876a0;--txt3:#3a3860;
+  --r:10px;--rl:16px
+}
+html,body{background:var(--bg);color:var(--txt);font-family:-apple-system,'SF Pro Text','Helvetica Neue',sans-serif;min-height:100vh;font-size:14px}
+
+/* TOPBAR */
+.topbar{background:var(--s1);border-bottom:1px solid var(--brd);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:60}
+.tb-left{display:flex;align-items:center;gap:10px}
+.tb-logo{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--gold);text-transform:uppercase}
+.tb-sep{width:1px;height:16px;background:var(--brd2)}
+.phase-badge{font-size:9px;font-weight:800;letter-spacing:.1em;color:var(--cyan);background:#00e5ff12;border:1px solid #00e5ff25;border-radius:20px;padding:3px 9px;text-transform:uppercase}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--grn);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tb-right{display:flex;align-items:center;gap:8px}
+.tb-btn{font-size:11px;font-weight:700;color:var(--txt2);background:none;border:1px solid var(--brd2);border-radius:6px;padding:5px 10px;cursor:pointer;font-family:inherit;transition:all .15s}
+.tb-btn:hover{border-color:var(--gold);color:var(--gold)}
+.tb-btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;border:none}
+
+/* TICKER TAPE */
+.ticker-wrap{background:var(--s2);border-bottom:1px solid var(--brd);overflow:hidden;height:32px;display:flex;align-items:center}
+.ticker-inner{display:flex;gap:0;white-space:nowrap;animation:scroll 40s linear infinite}
+.ticker-inner:hover{animation-play-state:paused}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tick-item{display:inline-flex;align-items:center;gap:6px;padding:0 20px;font-size:11px;font-weight:700;border-right:1px solid var(--brd)}
+.tick-sym{color:var(--txt2);letter-spacing:.04em}
+.tick-price{color:var(--txt)}
+.tick-chg.up{color:var(--grn)}.tick-chg.dn{color:var(--red)}
+
+/* MARKET OVERVIEW BAR */
+.mkt-bar{max-width:960px;margin:0 auto;padding:10px 16px 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.mkt-card{background:var(--s2);border:1px solid var(--brd);border-radius:var(--r);padding:10px 12px;display:flex;align-items:center;gap:10px}
+.mkt-icon{font-size:18px;flex-shrink:0}
+.mkt-info{flex:1;min-width:0}
+.mkt-lbl{font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em}
+.mkt-val{font-size:14px;font-weight:800;margin-top:1px}
+.mkt-val.grn{color:var(--grn)}.mkt-val.red{color:var(--red)}.mkt-val.gold{color:var(--gold)}.mkt-val.cyan{color:var(--cyan)}
+.mkt-sub{font-size:10px;color:var(--txt3);margin-top:1px}
+.loading-spin{display:inline-block;width:12px;height:12px;border:2px solid var(--brd2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ASSET SEARCH */
+.search-wrap{max-width:960px;margin:12px auto 0;padding:0 16px}
+.search-card{background:var(--s1);border:1px solid var(--brd2);border-radius:var(--rl);padding:16px}
+.search-top{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.search-sym{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px}
+.search-sym label{font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.09em}
+.sym-input{background:var(--s2);border:1px solid var(--brd2);border-radius:var(--r);color:var(--txt);font-family:inherit;font-size:16px;font-weight:700;padding:10px 12px;outline:none;width:100%;transition:border-color .15s;text-transform:uppercase;letter-spacing:.04em}
+.sym-input:focus{border-color:var(--cyan)}
+.asset-type-sel{display:flex;flex-direction:column;gap:4px}
+.asset-type-sel label{font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.09em}
+select{background:var(--s2);border:1px solid var(--brd2);border-radius:var(--r);color:var(--txt);font-family:inherit;font-size:14px;padding:10px 12px;outline:none;transition:border-color .15s;-webkit-appearance:none}
+select:focus{border-color:var(--gold)}
+select option{background:var(--s2)}
+.fetch-btn{padding:11px 20px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--cyan),var(--blu));color:#000;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:opacity .15s;white-space:nowrap}
+.fetch-btn:hover{opacity:.88}
+.fetch-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* FETCHED DATA PREVIEW */
+.data-preview{margin-top:14px;display:none}
+.dp-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.dp-card{background:var(--s3);border:1px solid var(--brd);border-radius:var(--r);padding:10px 12px}
+.dp-lbl{font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.dp-val{font-size:15px;font-weight:800}
+.dp-val.grn{color:var(--grn)}.dp-val.red{color:var(--red)}.dp-val.gold{color:var(--gold)}.dp-val.cyan{color:var(--cyan)}.dp-val.pur{color:var(--pur)}
+.dp-sub{font-size:10px;color:var(--txt3);margin-top:2px}
+.news-list{display:flex;flex-direction:column;gap:6px}
+.news-item{background:var(--s3);border:1px solid var(--brd);border-radius:var(--r);padding:10px 12px;display:flex;gap:10px;align-items:flex-start}
+.news-sentiment{font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;flex-shrink:0;margin-top:1px}
+.ns-pos{background:#00d17a18;color:var(--grn);border:1px solid #00d17a30}
+.ns-neg{background:#ff4d6d18;color:var(--red);border:1px solid #ff4d6d30}
+.ns-neu{background:#f0b42918;color:var(--gold);border:1px solid #f0b42930}
+.news-text{font-size:12px;color:var(--txt2);line-height:1.5}
+.news-text a{color:var(--cyan);text-decoration:none}
+.news-text a:hover{text-decoration:underline}
+.news-time{font-size:10px;color:var(--txt3);margin-top:2px}
+.analyst-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.analyst-pill{padding:6px 12px;border-radius:20px;font-size:11px;font-weight:800}
+.ap-buy{background:#00d17a18;color:var(--grn);border:1px solid #00d17a30}
+.ap-hold{background:#f0b42918;color:var(--gold);border:1px solid #f0b42930}
+.ap-sell{background:#ff4d6d18;color:var(--red);border:1px solid #ff4d6d30}
+.use-data-btn{width:100%;padding:11px;border-radius:var(--r);border:1px solid var(--grn);background:#00d17a12;color:var(--grn);font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:all .15s;margin-top:10px}
+.use-data-btn:hover{background:#00d17a22}
+
+/* SECTION TABS */
+.sec-nav{max-width:960px;margin:12px auto 0;padding:0 16px}
+.sec-tabs{display:flex;gap:5px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.sec-tabs::-webkit-scrollbar{display:none}
+.stab{flex-shrink:0;padding:7px 12px;border-radius:8px;border:1px solid var(--brd);background:var(--s1);color:var(--txt3);cursor:pointer;font-size:10px;font-weight:800;font-family:inherit;letter-spacing:.05em;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:5px;text-transform:uppercase}
+.stab:hover{color:var(--txt2);border-color:var(--brd2)}
+.stab.on{color:var(--txt);border-color:var(--brd3);background:var(--s2)}
+.stab .sdot{width:5px;height:5px;border-radius:50%;background:var(--txt3);flex-shrink:0}
+.stab.done .sdot{background:var(--grn)}
+.stab.partial .sdot{background:var(--gold)}
+
+/* SCORE HEADER */
+.score-hdr{max-width:960px;margin:10px auto 0;padding:0 16px;display:none}
+.score-card{background:var(--s2);border:1px solid var(--brd2);border-radius:var(--rl);padding:12px 16px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
+.score-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--blu),var(--pur))}
+.sc-asset{flex:1}
+.sc-name{font-size:17px;font-weight:800;letter-spacing:-.01em}
+.sc-meta{font-size:11px;color:var(--txt2);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
+.sc-score-wrap{text-align:center;flex-shrink:0}
+.sc-score{font-size:26px;font-weight:800}
+.sc-score-lbl{font-size:9px;color:var(--txt3);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.sc-prog{display:flex;gap:3px;margin-top:8px}
+.sc-pb{flex:1;height:3px;border-radius:2px;background:var(--s4);transition:background .4s}
+.sc-pb.done{background:var(--grn)}.sc-pb.partial{background:var(--gold)}
+.verdict-bar{max-width:960px;margin:8px auto 0;padding:0 16px}
+.verdict{border-radius:var(--r);padding:9px 14px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700}
+.verdict.bull{background:#00d17a12;border:1px solid #00d17a30;color:var(--grn)}
+.verdict.bear{background:#ff4d6d12;border:1px solid #ff4d6d30;color:var(--red)}
+.verdict.neutral{background:#f0b42912;border:1px solid #f0b42930;color:var(--gold)}
+
+/* MAIN */
+.main{max-width:960px;margin:10px auto 0;padding:0 16px 48px}
+.sec-page{display:none}.sec-page.on{display:block}
+
+/* SECTION CARD */
+.sec-card{background:var(--s1);border:1px solid var(--brd);border-radius:var(--rl);padding:18px;margin-bottom:12px}
+.sec-hd{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.sec-num{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+.sec-title{font-size:15px;font-weight:800;letter-spacing:-.01em}
+.sec-sub{font-size:11px;color:var(--txt3);margin-top:2px}
+
+/* FORM */
+.fgrid{display:grid;gap:10px;margin-bottom:12px}
+.fgrid.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.fgrid.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.fgrid.c4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.09em}
+.hint{font-size:10px;color:var(--txt3);margin-top:2px;line-height:1.5}
+input[type=text],input[type=number],input[type=url],textarea{background:var(--s2);border:1px solid var(--brd2);border-radius:var(--r);color:var(--txt);font-family:inherit;font-size:14px;padding:9px 11px;outline:none;width:100%;transition:border-color .15s}
+input:focus,textarea:focus{border-color:var(--gold)}
+textarea{resize:vertical;min-height:64px;line-height:1.6}
+.auto-field{border-color:var(--cyan)!important;background:#00e5ff06!important}
+.auto-badge{font-size:9px;font-weight:800;color:var(--cyan);letter-spacing:.06em;margin-left:6px}
+
+/* RATING */
+.rating-wrap{display:flex;gap:6px;align-items:center}
+.star{font-size:20px;cursor:pointer;transition:transform .1s;user-select:none;opacity:.3}
+.star.on{opacity:1}
+.star:hover{transform:scale(1.2)}
+.rating-lbl{font-size:11px;color:var(--txt2);margin-left:6px;font-weight:600}
+
+/* SIG BUTTONS */
+.sig-btns{display:flex;gap:6px;flex-wrap:wrap}
+.sig-btn{padding:8px 14px;border-radius:var(--r);border:1px solid var(--brd2);background:var(--s2);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;letter-spacing:.04em}
+.sig-btn.bull{color:var(--grn)}.sig-btn.bull.on{background:var(--grn3);border-color:var(--grn)}
+.sig-btn.bear{color:var(--red)}.sig-btn.bear.on{background:var(--red3);border-color:var(--red)}
+.sig-btn.neu{color:var(--gold)}.sig-btn.neu.on{background:#7a520025;border-color:var(--gold)}
+
+/* CHECKLIST */
+.chk-list{display:flex;flex-direction:column;gap:6px}
+.chk-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:var(--r);background:var(--s2);border:1px solid var(--brd);cursor:pointer;transition:border-color .15s;user-select:none}
+.chk-item:hover{border-color:var(--brd2)}
+.chk-item.checked{border-color:var(--grn2);background:#00d17a08}
+.chk-box{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--txt3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;margin-top:1px}
+.chk-item.checked .chk-box{background:var(--grn2);border-color:var(--grn);color:#000}
+.chk-text{flex:1;font-size:12px;color:var(--txt2);line-height:1.5}
+.chk-item.checked .chk-text{color:var(--txt)}
+
+/* RISK MATRIX */
+.risk-matrix{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.risk-item{background:var(--s2);border:1px solid var(--brd);border-radius:var(--r);padding:10px 12px}
+.risk-item label{font-size:9px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px}
+
+/* NAV BTNS */
+.nav-btns{display:flex;gap:8px;margin-top:16px}
+.btn-prev{padding:11px 18px;border-radius:var(--r);border:1px solid var(--brd2);background:transparent;color:var(--txt2);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s}
+.btn-prev:hover{color:var(--txt);border-color:var(--brd3)}
+.btn-nxt{flex:1;padding:11px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--cyan),var(--blu));color:#000;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;letter-spacing:.06em;text-transform:uppercase;transition:opacity .15s}
+.btn-nxt:hover{opacity:.86}
+
+/* SCORE GAUGE */
+.gauge-wrap{display:flex;align-items:center;gap:16px;padding:12px 0}
+.gauge-circle{width:72px;height:72px;border-radius:50%;border:4px solid var(--s4);display:flex;align-items:center;justify-content:center;flex-direction:column;flex-shrink:0}
+.gauge-val{font-size:20px;font-weight:800}
+.gauge-max{font-size:9px;color:var(--txt3);font-weight:700}
+.gauge-bars{flex:1}
+.gb-row{margin-bottom:7px}
+.gb-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px}
+.gb-bg{height:5px;background:var(--s4);border-radius:3px;overflow:hidden}
+.gb-fill{height:100%;border-radius:3px;transition:width .5s}
+
+/* HISTORY */
+.hist-item{background:var(--s2);border:1px solid var(--brd);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
+.hist-item:hover{border-color:var(--brd3)}
+.hist-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+.hist-name{font-size:14px;font-weight:800}
+.htag{font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px}
+.ht-bull{background:#00d17a18;color:var(--grn);border:1px solid #00d17a30}
+.ht-bear{background:#ff4d6d18;color:var(--red);border:1px solid #ff4d6d30}
+.ht-neu{background:#f0b42918;color:var(--gold);border:1px solid #f0b42930}
+.ht-gray{background:var(--s3);color:var(--txt3);border:1px solid var(--brd)}
+.hist-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--s4);border:1px solid var(--brd3);color:var(--txt);font-size:11px;font-weight:800;padding:10px 20px;border-radius:20px;z-index:999;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;letter-spacing:.06em;text-transform:uppercase}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-left">
+    <div class="tb-logo">TradeOS</div>
+    <div class="tb-sep"></div>
+    <div class="phase-badge">Phase 2 — DD Live</div>
+    <div class="live-dot" title="Live data"></div>
+  </div>
+  <div class="tb-right">
+    <button class="tb-btn" onclick="showHome()">📋 History</button>
+    <button class="tb-btn primary" onclick="newDD()">+ New DD</button>
+  </div>
+</div>
+
+<!-- TICKER TAPE -->
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="ticker-inner">
+    <div class="tick-item"><span class="tick-sym">Loading...</span></div>
+  </div>
+</div>
+
+<!-- MARKET OVERVIEW -->
+<div class="mkt-bar" id="mkt-bar">
+  <div class="mkt-card"><div class="mkt-icon">😱</div><div class="mkt-info"><div class="mkt-lbl">Fear & Greed</div><div class="mkt-val gold" id="fg-val"><div class="loading-spin"></div></div><div class="mkt-sub" id="fg-lbl">—</div></div></div>
+  <div class="mkt-card"><div class="mkt-icon">₿</div><div class="mkt-info"><div class="mkt-lbl">BTC Dominance</div><div class="mkt-val cyan" id="btcdom-val"><div class="loading-spin"></div></div><div class="mkt-sub" id="btc-price">—</div></div></div>
+  <div class="mkt-card"><div class="mkt-icon">📈</div><div class="mkt-info"><div class="mkt-lbl">BTC Price</div><div class="mkt-val gold" id="btc-val"><div class="loading-spin"></div></div><div class="mkt-sub" id="btc-chg">—</div></div></div>
+  <div class="mkt-card"><div class="mkt-icon">💱</div><div class="mkt-info"><div class="mkt-lbl">EUR/USD</div><div class="mkt-val cyan" id="eurusd-val"><div class="loading-spin"></div></div><div class="mkt-sub" id="eurusd-sub">Forex</div></div></div>
+</div>
+
+<!-- ASSET SEARCH -->
+<div class="search-wrap" id="search-wrap">
+  <div class="search-card">
+    <div class="search-top">
+      <div class="search-sym">
+        <label>Symbol / Ticker</label>
+        <input class="sym-input" type="text" id="sym-input" placeholder="BTC, ETH, AAPL, EURUSD..." oninput="this.value=this.value.toUpperCase()">
+      </div>
+      <div class="asset-type-sel">
+        <label>Asset Type</label>
+        <select id="sym-type">
+          <option value="crypto">Crypto</option>
+          <option value="forex">Forex</option>
+          <option value="stock">Stock</option>
+        </select>
+      </div>
+      <button class="fetch-btn" id="fetch-btn" onclick="fetchAllData()">🔍 Fetch Live Data</button>
+    </div>
+    <div class="data-preview" id="data-preview">
+      <!-- Price data -->
+      <div class="dp-grid" id="dp-price-grid"></div>
+      <!-- RSI + Technical -->
+      <div style="font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Technical Indicators</div>
+      <div class="dp-grid" id="dp-tech-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:12px"></div>
+      <!-- News -->
+      <div style="font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Latest News</div>
+      <div class="news-list" id="dp-news"></div>
+      <!-- Analyst -->
+      <div id="dp-analyst-wrap" style="display:none">
+        <div style="font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.08em;margin:10px 0 6px">Analyst Ratings</div>
+        <div class="analyst-wrap" id="dp-analyst"></div>
+      </div>
+      <button class="use-data-btn" onclick="fillFromData()">✓ ใช้ข้อมูลนี้ใน DD Form</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCORE HEADER -->
+<div class="score-hdr" id="score-hdr">
+  <div class="score-card">
+    <div class="sc-asset">
+      <div class="sc-name" id="sc-name">—</div>
+      <div class="sc-meta" id="sc-meta"></div>
+      <div class="sc-prog" id="sc-prog"></div>
+    </div>
+    <div class="sc-score-wrap">
+      <div class="sc-score" id="sc-score">0</div>
+      <div class="sc-score-lbl">/ 120 pts</div>
+    </div>
+  </div>
+</div>
+<div class="verdict-bar"><div id="verdict-banner"></div></div>
+
+<!-- SEC TABS -->
+<div class="sec-nav" id="sec-nav" style="display:none">
+  <div class="sec-tabs" id="sec-tabs"></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- HOME -->
+  <div id="pg-home">
+    <div style="font-size:10px;font-weight:800;color:var(--txt3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">DD History</div>
+    <div id="hist-list"></div>
+    <div id="hist-empty" style="text-align:center;padding:3rem;color:var(--txt3);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">ยังไม่มี DD — กด "+ New DD" เพื่อเริ่ม</div>
+  </div>
+
+  <!-- DD FORM -->
+  <div id="pg-dd" style="display:none">
+
+    <!-- SEC 0: Asset Overview -->
+    <div class="sec-page on" id="sp-0">
+      <div class="sec-card">
+        <div class="sec-hd">
+          <div class="sec-num" style="background:#00e5ff18;color:var(--cyan);border:1px solid #00e5ff25">①</div>
+          <div><div class="sec-title">Asset Overview <span class="auto-badge">AUTO-FILL</span></div><div class="sec-sub">ข้อมูลพื้นฐาน — ดึงจาก API อัตโนมัติ</div></div>
+        </div>
+        <div class="fgrid c4">
+          <div class="fg"><label>Symbol</label><input type="text" id="f-name" placeholder="BTC" class="auto-field"></div>
+          <div class="fg"><label>Asset Type</label><select id="f-type"><option value="crypto">Crypto</option><option value="forex">Forex</option><option value="stock">Stock</option><option value="etf">ETF</option></select></div>
+          <div class="fg"><label>Market Cap</label><input type="text" id="f-mcap" placeholder="Auto" class="auto-field"></div>
+          <div class="fg"><label>Exchange</label><input type="text" id="f-exchange" placeholder="Binance, NYSE..."></div>
+        </div>
+        <div class="fgrid c4">
+          <div class="fg"><label>Current Price <span class="auto-badge">LIVE</span></label><input type="text" id="f-price" class="auto-field" placeholder="0"></div>
+          <div class="fg"><label>24h Change %</label><input type="text" id="f-chg24" class="auto-field" placeholder="Auto"></div>
+          <div class="fg"><label>52W High <span class="auto-badge">LIVE</span></label><input type="text" id="f-52h" class="auto-field" placeholder="Auto"></div>
+          <div class="fg"><label>52W Low <span class="auto-badge">LIVE</span></label><input type="text" id="f-52l" class="auto-field" placeholder="Auto"></div>
+        </div>
+        <div id="crypto-extra" class="fgrid c3">
+          <div class="fg"><label>Circulating Supply</label><input type="text" id="f-circ" class="auto-field" placeholder="Auto"></div>
+          <div class="fg"><label>Total Supply</label><input type="text" id="f-total-supply" placeholder="Auto" class="auto-field"></div>
+          <div class="fg"><label>ATH</label><input type="text" id="f-ath" class="auto-field" placeholder="Auto"></div>
+        </div>
+        <div class="fg"><label>เหตุผลที่สนใจ</label><textarea id="f-interest" placeholder="เช่น เห็น breakout บน D1 + volume spike..."></textarea></div>
+      </div>
+      <div class="nav-btns"><button class="btn-nxt" onclick="goSec(1)">ต่อไป → Macro ▸</button></div>
+    </div>
+
+    <!-- SEC 1: Macro -->
+    <div class="sec-page" id="sp-1">
+      <div class="sec-card">
+        <div class="sec-hd">
+          <div class="sec-num" style="background:#4f8ef718;color:var(--blu);border:1px solid #4f8ef725">②</div>
+          <div><div class="sec-title">Macro & Market <span class="auto-badge">AUTO-FILL</span></div><div class="sec-sub">ภาพรวม macro ดึงจาก API อัตโนมัติ</div></div>
+        </div>
+        <div class="fgrid c4">
+          <div class="fg"><label>Fear & Greed <span class="auto-badge">LIVE</span></label><input type="text" id="f-fg" class="auto-field" placeholder="Auto"></div>
+          <div class="fg"><label>BTC Dominance <span class="auto-badge">LIVE</span></label><input type="text" id="f-btcdom" class="auto-field" placeholder="Auto"></div>
+          <div class="fg"><label>BTC 24h Change</label><input type="text" id="f-btcchg" class="auto-field" placeholder="Auto"></div>
+          <div class="fg"><label>EUR/USD <span class="auto-badge">LIVE</span></label><input type="text" id="f-eurusd" class="auto-field" placeholder="Auto"></div>
+        </div>
+        <div class="fg"><label>Market Cycle</label>
+          <div class="sig-btns">
+            <button class="sig-btn bull" data-group="cycle" data-val="bull" onclick="sigGroup('cycle',this)">🐂 Bull</button>
+            <button class="sig-btn bear" data-group="cycle" data-val="bear" onclick="sigGroup('cycle',this)">🐻 Bear</button>
+            <button class="sig-btn neu" data-group="cycle" data-val="sideways" onclick="sigGroup('cycle',this)">↔ Sideways</button>
+            <button class="sig-btn bull" data-group="cycle" data-val="recovery" onclick="sigGroup('cycle',this)">↗ Recovery</button>
+          </div>
+        </div>
+        <div class="fg"><label>Macro Notes</label><textarea id="f-macro-notes" placeholder="Macro เอื้อหรือขัดต่อ asset นี้อย่างไร?"></textarea></div>
+        <div class="fg"><label>Macro Rating</label>
+          <div class="rating-wrap" id="r-macro"><span class="star" data-val="1" onclick="setRating('macro',1)">★</span><span class="star" data-val="2" onclick="setRating('macro',2)">★</span><span class="star" data-val="3" onclick="setRating('macro',3)">★</span><span class="star" data-val="4" onclick="setRating('macro',4)">★</span><span class="star" data-val="5" onclick="setRating('macro',5)">★</span><span class="rating-lbl" id="rl-macro">ยังไม่ได้ให้คะแนน</span></div>
+        </div>
+      </div>
+      <div class="nav-btns"><button class="btn-prev" onclick="goSec(0)">← กลับ</button><button class="btn-nxt" onclick="goSec(2)">ต่อไป → Fundamentals ▸</button></div>
+    </div>
+
+    <!-- SEC 2: Fundamentals -->
+    <div class="sec-page" id="sp-2">
+      <div class="sec-card">
+        <div class="sec-hd">
+          <div class="sec-num" style="background:#9b6dff18;color:var(--pur);border:1px solid #9b6dff25">③</div>
+          <div><div class="sec-title">Fundamentals & Moat</div><div class="sec-sub">คุณภาพและความได้เปรียบ — กรอกเอง</div></div>
+        </div>
+        <div class="chk-list" id="moat-chk">
+          <div class="chk-item" onclick="toggleChk(this,'moat',0)"><div class="chk-box"></div><div class="chk-text">Real use case / adoption ที่วัดได้</div></div>
+          <div class="chk-item" onclick="toggleChk(this,'moat',1)"><div class="chk-box"></div><div class="chk-text">Competitive moat ชัดเจน</div></div>
+          <div class="chk-item" onclick="toggleChk(this,'moat',2)"><div class="chk-box"></div><div class="chk-text">Roadmap ชัดเจนและทำได้จริง</div></div>
+          <div class="chk-item" onclick="toggleChk(this,'moat',3)"><div class="chk-box"></div><div class="chk-text">Market share ใน niche ของตัวเอง</div></div>
+          <div class="chk-item" onclick="toggleChk(this,'moat',4)"><div class="chk-box"></div><div class="chk-text">ไม่มีคู่แข่งที่ใกล้เคียงจะแซง</div></div>
+        </div>
+        <div class="fgrid c2" style="margin-top:12px">
+          <div class="fg"><label>Use Case</label><textarea id="f-usecase" placeholder="ทำอะไร แก้ปัญหาอะไร?"></textarea></div>
+          <div class="fg"><label>Competitors</label><textarea id="f-competitors" placeholder="คู่แข่งหลัก?"></textarea></div>
+        </div>
+        <div class="fg"><label>Fundamentals Rating</label>
+          <div class="rating-wrap" id="r-fund"><span class="star" data-val="1" onclick="setRating('fund',1)">★</span><span class="star" data-val="2" onclick="setRating('fund',2)">★</span><span class="star" data-val="3" onclick="setRating('fund',3)">★</span><span class="star" data-val="4" onclick="setRating('fund',4)">★</span><span class="star" data-val="5" onclick="setRating('fund',5)">★</span><span class="rating-lbl" id="rl-fund">ยังไม่ได้ให้คะแนน</span></div>
+        </div>
+      </div>
+      <div class="nav-btns"><button class="btn-prev" onclick="goSec(1)">← กลับ</button><button class="btn-nxt" onclick="goSec(3)">ต่อไป → Technical ▸</button></div>
+    </div>
+
+    <!-- SEC 3: Technical -->
+    <div class="sec-page" id="sp-3">
+      <div class="sec-card">
+        <div class="sec-hd">
+          <div class="sec-num" style="background:#4f8ef718;color:var(--blu);border:1px solid #4f8ef725">④</div>
+          <div><div class="sec-title">Technical Analysis <span class="auto-badge">AUTO-FILL</span></div><div class="sec-sub">Indicators ดึงจาก API</div></div>
+        </div>
+        <div class="fgrid c4">
+          <div class="fg"><label>RSI (14) <span class="auto-badge">LIVE</span></label><input type="text" id="f-rsi" class="auto-field" placeholder="Auto"></div>
+          <div class="fg"><label>Volume 24h</label><input type="text" id="f-vol" class="auto-field" placeholder="Auto"></div>
+          <div class="fg"><label>Support</label><input type="text" id="f-support" placeholder="เช่น $60,000"></div>
+          <div class="fg"><label>Resistance</label><input type="text" id="f-resist" placeholder="เช่น $72,000"></div>
+        </div>
+        <div class="fg"><label>Overall Trend</label>
+          <div class="sig-btns">
+            <button class="sig-btn bull" data-group="trend" data-val="uptrend" onclick="sigGroup('trend',this)">▲ Uptrend</button>
+            <button class="sig-btn bear" data-group="trend" data-val="downtrend" onclick="sigGroup('trend',this)">▼ Downtrend</button>
+            <button class="sig-btn neu" data-group="trend" data-val="sideways" onclick="sigGroup('trend',this)">↔ Sideways</button>
+            <button class="sig-btn bull" data-group="trend" data-val="reversal" onclick="sigGroup('trend',this)">↗ Reversal</button>
+          </div>
+        </div>
+        <div class="chk-list" id="ta-chk">
+          <div class="chk-item" onclick="toggleChk(this,'ta',0)"><div class="chk-box"></div><div class="chk-text">Price above key EMA (50/200)</div></div>
+          <div class="chk-item" onclick="toggleChk(this,'ta',1)"><div class="chk-box"></div><div class="chk-text">RSI ไม่ overbought (&lt; 70)</div></div>
+          <div class="chk-item" onclick="toggleChk(this,'ta',2)"><div class="chk-box"></div><div class="chk-text">Volume confirm trend</div></div>
+          <div class="chk-item" onclick="toggleChk(this,'ta',3)"><div class="chk-box"></div><div class="chk-text">มี clear entry + R:R ≥ 2:1</div></div>
+        </div>
+        <div class="fg"><label>Technical Rating</label>
+          <div class="rating-wrap" id="r-ta"><span class="star" data-val="1" onclick="setRating('ta',1)">★</span><span class="star" data-val="2" onclick="setRating('ta',2)">★</span><span class="star" data-val="3" onclick="setRating('ta',3)">★</span><span class="star" data-val="4" onclick="setRating('ta',4)">★</span><span class="star" data-val="5" onclick="setRating('ta',5)">★</span><span class="rating-lbl" id="rl-ta">ยังไม่ได้ให้คะแนน</span></div>
+        </div>
+      </div>
+      <div class="nav-btns"><button class="btn-prev" onclick="goSec(2)">← กลับ</button><button class="btn-nxt" onclick="goSec(4)">ต่อไป → News ▸</button></div>
+    </div>
+
+    <!-- SEC 4: News & Sentiment -->
+    <div class="sec-page" id="sp-4">
+      <div class="sec-card">
+        <div class="sec-hd">
+          <div class="sec-num" style="background:#ff8c0018;color:var(--ora);border:1px solid #ff8c0025">⑤</div>
+          <div><div class="sec-title">News & Sentiment <span class="auto-badge">AUTO-FILL</span></div><div class="sec-sub">ข่าวล่าสุดจาก Finnhub</div></div>
+        </div>
+        <div id="news-section-display" style="margin-bottom:12px"></div>
+        <div class="fg"><label>Sentiment โดยรวม</label>
+          <div class="sig-btns">
+            <button class="sig-btn bull" data-group="sent" data-val="very_bullish" onclick="sigGroup('sent',this)">🚀 Very Bullish</button>
+            <button class="sig-btn bull" data-group="sent" data-val="bullish" onclick="sigGroup('sent',this)">📈 Bullish</button>
+            <button class="sig-btn neu" data-group="sent" data-val="neutral" onclick="sigGroup('sent',this)">😐 Neutral</button>
+            <button class="sig-btn bear" data-group="sent" data-val="bearish" onclick="sigGroup('sent',this)">📉 Bearish</button>
+            <button class="sig-btn bear" data-group="sent" data-val="very_bearish" onclick="sigGroup('sent',this)">💀 Very Bearish</button>
+          </div>
+        </div>
+        <div class="fg"><label>Catalysts ที่กำลังจะมา</label><textarea id="f-catalysts" placeholder="เช่น ETF approval, halving, earnings..."></textarea></div>
+        <div class="fg"><label>Analyst Ratings</label><div id="analyst-section-display" style="margin-top:6px"></div></div>
+        <div class="fg"><label>Sentiment Rating</label>
+          <div class="rating-wrap" id="r-sent"><span class="star" data-val="1" onclick="setRating('sent',1)">★</span><span class="star" data-val="2" onclick="setRating('sent',2)">★</span><span class="star" data-val="3" onclick="setRating('sent',3)">★</span><span class="star" data-val="4" onclick="setRating('sent',4)">★</span><span class="star" data-val="5" onclick="setRating('sent',5)">★</span><span class="rating-lbl" id="rl-sent">ยังไม่ได้ให้คะแนน</span></div>
+        </div>
+      </div>
+      <div class="nav-btns"><button class="btn-prev" onclick="goSec(3)">← กลับ</button><button class="btn-nxt" onclick="goSec(5)">ต่อไป → Risk ▸</button></div>
+    </div>
+
+    <!-- SEC 5: Risk -->
+    <div class="sec-page" id="sp-5">
+      <div class="sec-card">
+        <div class="sec-hd">
+          <div class="sec-num" style="background:#ff4d6d18;color:var(--red);border:1px solid #ff4d6d25">⑥</div>
+          <div><div class="sec-title">Risk Assessment</div><div class="sec-sub">ระบุและประเมิน risk ทุกมิติ</div></div>
+        </div>
+        <div class="risk-matrix">
+          <div class="risk-item"><label>Liquidity Risk</label><select id="r-liquidity"><option value="">ระดับ...</option><option value="low">🟢 Low</option><option value="med">🟡 Medium</option><option value="high">🔴 High</option></select></div>
+          <div class="risk-item"><label>Regulatory Risk</label><select id="r-regulatory"><option value="">ระดับ...</option><option value="low">🟢 Low</option><option value="med">🟡 Medium</option><option value="high">🔴 High</option></select></div>
+          <div class="risk-item"><label>Volatility</label><select id="r-volatility"><option value="">ระดับ...</option><option value="low">🟢 Low</option><option value="med">🟡 Medium</option><option value="high">🔴 High</option></select></div>
+          <div class="risk-item"><label>Geopolitical</label><select id="r-geo"><option value="">ระดับ...</option><option value="low">🟢 Low</option><option value="med">🟡 Medium</option><option value="high">🔴 High</option></select></div>
+        </div>
+        <div class="chk-list" id="risk-chk">
+          <div class="chk-item" onclick="toggleChk(this,'risk',0)"><div class="chk-box"></div><div class="chk-text">ไม่มี regulatory crackdown ที่กำลังจะมา</div></div>
+          <div class="chk-item" onclick="toggleChk(this,'risk',1)"><div class="chk-box"></div><div class="chk-text">Liquidity เพียงพอสำหรับ position size</div></div>
+          <div class="chk-item" onclick="toggleChk(this,'risk',2)"><div class="chk-box"></div><div class="chk-text">(Crypto) Smart contract ผ่าน audit</div></div>
+          <div class="chk-item" onclick="toggleChk(this,'risk',3)"><div class="chk-box"></div><div class="chk-text">Stress test: ถ้า BTC -40% asset นี้จะอยู่ที่ไหน?</div></div>
+        </div>
+        <div class="fg" style="margin-top:12px"><label>Risk Notes</label><textarea id="f-risk-notes" placeholder="Worst case scenario..."></textarea></div>
+        <div class="fg"><label>Overall Risk</label>
+          <div class="sig-btns">
+            <button class="sig-btn bull" data-group="risk-ov" data-val="low" onclick="sigGroup('risk-ov',this)">🟢 Low</button>
+            <button class="sig-btn neu" data-group="risk-ov" data-val="med" onclick="sigGroup('risk-ov',this)">🟡 Medium</button>
+            <button class="sig-btn bear" data-group="risk-ov" data-val="high" onclick="sigGroup('risk-ov',this)">🔴 High</button>
+          </div>
+        </div>
+      </div>
+      <div class="nav-btns"><button class="btn-prev" onclick="goSec(4)">← กลับ</button><button class="btn-nxt" onclick="goSec(6)">ต่อไป → Verdict ▸</button></div>
+    </div>
+
+    <!-- SEC 6: Verdict -->
+    <div class="sec-page" id="sp-6">
+      <div class="sec-card">
+        <div class="sec-hd">
+          <div class="sec-num" style="background:#00d17a18;color:var(--grn);border:1px solid #00d17a25">⑦</div>
+          <div><div class="sec-title">Final Verdict</div><div class="sec-sub">สรุปผลและตัดสินใจ</div></div>
+        </div>
+        <div class="gauge-wrap" id="score-gauge"></div>
+        <div class="fg"><label>Decision</label>
+          <div class="sig-btns">
+            <button class="sig-btn bull" style="font-size:14px" data-group="decision" data-val="strong_buy" onclick="sigGroup('decision',this)">🚀 Strong Buy</button>
+            <button class="sig-btn bull" data-group="decision" data-val="buy" onclick="sigGroup('decision',this)">✅ Buy</button>
+            <button class="sig-btn neu" data-group="decision" data-val="watch" onclick="sigGroup('decision',this)">👀 Watchlist</button>
+            <button class="sig-btn bear" data-group="decision" data-val="avoid" onclick="sigGroup('decision',this)">⛔ Avoid</button>
+            <button class="sig-btn bear" data-group="decision" data-val="short" onclick="sigGroup('decision',this)">📉 Short</button>
+          </div>
+        </div>
+        <div class="fgrid c2">
+          <div class="fg"><label>Bull Case</label><textarea id="f-bull-case" placeholder="ถ้า thesis ถูกต้อง..."></textarea></div>
+          <div class="fg"><label>Bear Case</label><textarea id="f-bear-case" placeholder="สิ่งที่ invalidate thesis..."></textarea></div>
+        </div>
+        <div class="fgrid c3">
+          <div class="fg"><label>Entry Plan</label><input type="text" id="f-entry-plan" placeholder="เช่น $62,000"></div>
+          <div class="fg"><label>Stop Loss</label><input type="text" id="f-sl-plan" placeholder="เช่น $58,000"></div>
+          <div class="fg"><label>Take Profit</label><input type="text" id="f-tp-plan" placeholder="เช่น $80,000"></div>
+        </div>
+        <div class="fg"><label>สรุป (ความคิดเห็น)</label><textarea id="f-summary" placeholder="เหตุผลหลักที่จะลงทุน/ไม่ลงทุน..."></textarea></div>
+        <div class="fg"><label>Confidence</label>
+          <div class="rating-wrap" id="r-final"><span class="star" data-val="1" onclick="setRating('final',1)">★</span><span class="star" data-val="2" onclick="setRating('final',2)">★</span><span class="star" data-val="3" onclick="setRating('final',3)">★</span><span class="star" data-val="4" onclick="setRating('final',4)">★</span><span class="star" data-val="5" onclick="setRating('final',5)">★</span><span class="rating-lbl" id="rl-final">Confidence level</span></div>
+        </div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="goSec(5)">← กลับ</button>
+        <button class="btn-nxt" style="background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000" onclick="saveDD()">💾 บันทึก DD ✓</button>
+      </div>
+    </div>
+
+  </div><!-- /pg-dd -->
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── API KEYS ──
+const FINNHUB_KEY = 'd6v9a31r01qiiutb01jgd6v9a31r01qiiutb01k0';
+const AV_KEY = 'OQI0JMBZ56W0P2KM';
+
+// ── STATE ──
+let ddList = JSON.parse(localStorage.getItem('tradeos_dd2_v1') || '[]');
+let currentDD = null;
+let currentSec = 0;
+const TOTAL_SECS = 7;
+const sigState = {}, ratings = {}, chkState = {};
+let liveData = {};
+
+const today = () => new Date().toISOString().slice(0, 10);
+const fmtD = d => { if (!d) return '—'; const [y, m, day] = d.split('-'); return `${day}/${m}/${y.slice(2)}`; };
+const fmtN = n => { if (!n && n !== 0) return '—'; const v = parseFloat(n); if (Math.abs(v) >= 1e9) return (v / 1e9).toFixed(2) + 'B'; if (Math.abs(v) >= 1e6) return (v / 1e6).toFixed(2) + 'M'; if (Math.abs(v) >= 1e3) return (v / 1e3).toFixed(2) + 'K'; return v.toLocaleString('en-US', { maximumFractionDigits: 4 }); };
+const RATING_LABELS = ['', 'แย่มาก', 'พอใช้', 'ปานกลาง', 'ดี', 'ดีมาก'];
+const SEC_LABELS = ['Asset', 'Macro', 'Fundamentals', 'Technical', 'News', 'Risk', 'Verdict'];
+
+// ── MARKET OVERVIEW INIT ──
+async function loadMarketOverview() {
+  try {
+    // Fear & Greed
+    const fg = await fetch('https://api.alternative.me/fng/').then(r => r.json());
+    const fgv = fg.data[0]; document.getElementById('fg-val').textContent = fgv.value; document.getElementById('fg-lbl').textContent = fgv.value_classification;
+    // BTC via CoinGecko
+    const cg = await fetch('https://api.coingecko.com/api/v3/global').then(r => r.json());
+    const dom = cg.data.market_cap_percentage.btc.toFixed(1) + '%';
+    document.getElementById('btcdom-val').textContent = dom;
+    // BTC price
+    const btc = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true').then(r => r.json());
+    const bprice = btc.bitcoin.usd; const bchg = btc.bitcoin.usd_24h_change.toFixed(2);
+    document.getElementById('btc-val').textContent = '$' + bprice.toLocaleString();
+    document.getElementById('btc-chg').textContent = (bchg >= 0 ? '+' : '') + bchg + '%';
+    document.getElementById('btc-chg').style.color = bchg >= 0 ? 'var(--grn)' : 'var(--red)';
+    // EUR/USD via Alpha Vantage
+    const fx = await fetch(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=EUR&to_currency=USD&apikey=${AV_KEY}`).then(r => r.json());
+    const rate = fx['Realtime Currency Exchange Rate'];
+    if (rate) { document.getElementById('eurusd-val').textContent = parseFloat(rate['5. Exchange Rate']).toFixed(4); }
+    // Store for auto-fill
+    liveData.fg = fgv.value; liveData.fgLbl = fgv.value_classification;
+    liveData.btcDom = dom; liveData.btcChg = bchg; liveData.btcPrice = bprice;
+    if (rate) liveData.eurusd = parseFloat(rate['5. Exchange Rate']).toFixed(4);
+    // Fill macro fields if open
+    autoFillMacro();
+    // Load ticker
+    loadTicker();
+  } catch (e) { console.log('Market overview error:', e); }
+}
+
+// ── TICKER ──
+async function loadTicker() {
+  try {
+    const pairs = ['bitcoin', 'ethereum', 'solana', 'binancecoin', 'ripple'];
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${pairs.join(',')}&vs_currencies=usd&include_24hr_change=true`).then(r => r.json());
+    const names = { bitcoin: 'BTC', ethereum: 'ETH', solana: 'SOL', binancecoin: 'BNB', ripple: 'XRP' };
+    let html = '';
+    Object.entries(res).forEach(([k, v]) => {
+      const chg = v.usd_24h_change.toFixed(2);
+      const cls = chg >= 0 ? 'up' : 'dn';
+      html += `<div class="tick-item"><span class="tick-sym">${names[k]}</span><span class="tick-price">$${v.usd.toLocaleString()}</span><span class="tick-chg ${cls}">${chg >= 0 ? '+' : ''}${chg}%</span></div>`;
+    });
+    // Duplicate for seamless loop
+    const inner = document.getElementById('ticker-inner');
+    inner.innerHTML = html + html;
+  } catch (e) { }
+}
+
+// ── FETCH ALL DATA ──
+async function fetchAllData() {
+  const sym = document.getElementById('sym-input').value.trim();
+  const type = document.getElementById('sym-type').value;
+  if (!sym) { showToast('กรุณาใส่ Symbol ก่อน'); return; }
+  const btn = document.getElementById('fetch-btn');
+  btn.disabled = true; btn.textContent = '⏳ Loading...';
+  liveData = { ...liveData, symbol: sym, type };
+  try {
+    if (type === 'crypto') await fetchCrypto(sym);
+    else if (type === 'forex') await fetchForex(sym);
+    else await fetchStock(sym);
+    await fetchNews(sym, type);
+    if (type === 'stock') await fetchAnalyst(sym);
+    renderDataPreview();
+    document.getElementById('data-preview').style.display = 'block';
+  } catch (e) { showToast('Fetch error: ' + e.message); }
+  btn.disabled = false; btn.textContent = '🔍 Fetch Live Data';
+}
+
+async function fetchCrypto(sym) {
+  const idMap = { BTC: 'bitcoin', ETH: 'ethereum', SOL: 'solana', BNB: 'binancecoin', XRP: 'ripple', ADA: 'cardano', DOGE: 'dogecoin', AVAX: 'avalanche-2', DOT: 'polkadot', LINK: 'chainlink', MATIC: 'matic-network', UNI: 'uniswap', ATOM: 'cosmos', LTC: 'litecoin', TRX: 'tron', NEAR: 'near', TON: 'the-open-network' };
+  const id = idMap[sym.toUpperCase()] || sym.toLowerCase();
+  const [detail, ohlc] = await Promise.all([
+    fetch(`https://api.coingecko.com/api/v3/coins/${id}?localization=false&tickers=false&developer_data=false`).then(r => r.json()),
+    fetch(`https://api.coingecko.com/api/v3/coins/${id}/ohlc?vs_currency=usd&days=14`).then(r => r.json())
+  ]);
+  if (detail.error) throw new Error('ไม่พบ symbol นี้ใน CoinGecko');
+  const md = detail.market_data;
+  liveData.name = detail.name; liveData.symbol = detail.symbol.toUpperCase();
+  liveData.price = md.current_price.usd;
+  liveData.change24 = md.price_change_percentage_24h?.toFixed(2);
+  liveData.mcap = fmtN(md.market_cap.usd);
+  liveData.vol24 = fmtN(md.total_volume.usd);
+  liveData.high52 = fmtN(md.high_24h.usd);
+  liveData.low52 = fmtN(md.low_24h.usd);
+  liveData.ath = fmtN(md.ath.usd);
+  liveData.circSupply = fmtN(md.circulating_supply);
+  liveData.totalSupply = md.total_supply ? fmtN(md.total_supply) : '∞';
+  // RSI calculation from OHLC
+  if (Array.isArray(ohlc) && ohlc.length >= 15) {
+    const closes = ohlc.map(c => c[4]);
+    liveData.rsi = calcRSI(closes, 14).toFixed(1);
+  }
+}
+
+async function fetchForex(sym) {
+  const pair = sym.replace('/', '').toUpperCase();
+  const from = pair.slice(0, 3), to = pair.slice(3) || 'USD';
+  const [rate, daily] = await Promise.all([
+    fetch(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${from}&to_currency=${to}&apikey=${AV_KEY}`).then(r => r.json()),
+    fetch(`https://www.alphavantage.co/query?function=FX_DAILY&from_symbol=${from}&to_symbol=${to}&apikey=${AV_KEY}&outputsize=compact`).then(r => r.json())
+  ]);
+  const r = rate['Realtime Currency Exchange Rate'];
+  if (!r) throw new Error('ไม่พบ Forex pair นี้');
+  liveData.name = `${from}/${to}`; liveData.symbol = `${from}/${to}`;
+  liveData.price = parseFloat(r['5. Exchange Rate']).toFixed(5);
+  liveData.change24 = (parseFloat(r['5. Exchange Rate']) - parseFloat(r['8. Bid Price'])).toFixed(5);
+  // 52W from daily data
+  const ts = daily['Time Series FX (Daily)'];
+  if (ts) {
+    const vals = Object.values(ts).slice(0, 252).map(d => parseFloat(d['2. high']));
+    const lows = Object.values(ts).slice(0, 252).map(d => parseFloat(d['3. low']));
+    liveData.high52 = Math.max(...vals).toFixed(5);
+    liveData.low52 = Math.min(...lows).toFixed(5);
+    // RSI from closes
+    const closes = Object.values(ts).slice(0, 30).map(d => parseFloat(d['4. close'])).reverse();
+    if (closes.length >= 15) liveData.rsi = calcRSI(closes, 14).toFixed(1);
+  }
+}
+
+async function fetchStock(sym) {
+  const [quote, profile, metric] = await Promise.all([
+    fetch(`https://finnhub.io/api/v1/quote?symbol=${sym}&token=${FINNHUB_KEY}`).then(r => r.json()),
+    fetch(`https://finnhub.io/api/v1/stock/profile2?symbol=${sym}&token=${FINNHUB_KEY}`).then(r => r.json()),
+    fetch(`https://finnhub.io/api/v1/stock/metric?symbol=${sym}&metric=all&token=${FINNHUB_KEY}`).then(r => r.json())
+  ]);
+  if (!quote.c) throw new Error('ไม่พบ stock symbol นี้');
+  const chg = ((quote.c - quote.pc) / quote.pc * 100).toFixed(2);
+  liveData.name = profile.name || sym; liveData.symbol = sym.toUpperCase();
+  liveData.price = quote.c; liveData.change24 = chg;
+  liveData.mcap = profile.marketCapitalization ? fmtN(profile.marketCapitalization * 1e6) : '—';
+  liveData.exchange = profile.exchange || '—';
+  liveData.vol24 = fmtN(quote.v);
+  const m = metric.metric || {};
+  liveData.high52 = m['52WeekHigh']; liveData.low52 = m['52WeekLow'];
+  liveData.pe = m.peNormalizedAnnual; liveData.roe = m.roeRfy;
+  // RSI via Alpha Vantage
+  try {
+    const rsiData = await fetch(`https://www.alphavantage.co/query?function=RSI&symbol=${sym}&interval=daily&time_period=14&series_type=close&apikey=${AV_KEY}`).then(r => r.json());
+    const rsiVals = rsiData['Technical Analysis: RSI'];
+    if (rsiVals) { const latest = Object.values(rsiVals)[0]; liveData.rsi = parseFloat(latest.RSI).toFixed(1); }
+  } catch (e) { }
+}
+
+async function fetchNews(sym, type) {
+  try {
+    let newsData;
+    const now = Math.floor(Date.now() / 1000), weekAgo = now - 7 * 86400;
+    if (type === 'crypto') {
+      newsData = await fetch(`https://finnhub.io/api/v1/news?category=crypto&token=${FINNHUB_KEY}`).then(r => r.json());
+      const q = sym.toLowerCase();
+      liveData.news = newsData.filter(n => n.headline.toLowerCase().includes(q) || n.summary?.toLowerCase().includes(q)).slice(0, 5);
+    } else {
+      newsData = await fetch(`https://finnhub.io/api/v1/company-news?symbol=${sym}&from=${new Date(weekAgo * 1000).toISOString().slice(0, 10)}&to=${new Date().toISOString().slice(0, 10)}&token=${FINNHUB_KEY}`).then(r => r.json());
+      liveData.news = Array.isArray(newsData) ? newsData.slice(0, 5) : [];
+    }
+  } catch (e) { liveData.news = []; }
+}
+
+async function fetchAnalyst(sym) {
+  try {
+    const data = await fetch(`https://finnhub.io/api/v1/stock/recommendation?symbol=${sym}&token=${FINNHUB_KEY}`).then(r => r.json());
+    liveData.analyst = Array.isArray(data) ? data[0] : null;
+  } catch (e) { liveData.analyst = null; }
+}
+
+// ── RSI CALC ──
+function calcRSI(closes, period = 14) {
+  if (closes.length < period + 1) return 50;
+  let gains = 0, losses = 0;
+  for (let i = 1; i <= period; i++) { const d = closes[i] - closes[i - 1]; if (d > 0) gains += d; else losses -= d; }
+  let avgG = gains / period, avgL = losses / period;
+  for (let i = period + 1; i < closes.length; i++) {
+    const d = closes[i] - closes[i - 1];
+    avgG = (avgG * (period - 1) + Math.max(d, 0)) / period;
+    avgL = (avgL * (period - 1) + Math.max(-d, 0)) / period;
+  }
+  const rs = avgL === 0 ? 100 : avgG / avgL;
+  return 100 - 100 / (1 + rs);
+}
+
+// ── RENDER DATA PREVIEW ──
+function renderDataPreview() {
+  const d = liveData;
+  const chgCls = parseFloat(d.change24) >= 0 ? 'grn' : 'red';
+  const chgSign = parseFloat(d.change24) >= 0 ? '+' : '';
+  const rsiColor = d.rsi ? (parseFloat(d.rsi) > 70 ? 'red' : parseFloat(d.rsi) < 30 ? 'cyan' : 'grn') : 'gold';
+
+  document.getElementById('dp-price-grid').innerHTML = `
+    <div class="dp-card"><div class="dp-lbl">Price</div><div class="dp-val gold">${d.price ? '$' + parseFloat(d.price).toLocaleString() : '—'}</div><div class="dp-sub">${d.name || d.symbol}</div></div>
+    <div class="dp-card"><div class="dp-lbl">24h Change</div><div class="dp-val ${chgCls}">${chgSign}${d.change24 || '—'}%</div></div>
+    <div class="dp-card"><div class="dp-lbl">Market Cap</div><div class="dp-val cyan">${d.mcap || '—'}</div></div>
+    <div class="dp-card"><div class="dp-lbl">Volume 24h</div><div class="dp-val pur">${d.vol24 || '—'}</div></div>
+  `;
+  document.getElementById('dp-tech-grid').innerHTML = `
+    <div class="dp-card"><div class="dp-lbl">RSI (14)</div><div class="dp-val ${rsiColor}">${d.rsi || '—'}</div><div class="dp-sub">${d.rsi ? (parseFloat(d.rsi) > 70 ? 'Overbought' : parseFloat(d.rsi) < 30 ? 'Oversold' : 'Neutral') : ''}</div></div>
+    <div class="dp-card"><div class="dp-lbl">52W High</div><div class="dp-val grn">${d.high52 ? '$' + parseFloat(d.high52).toLocaleString() : '—'}</div></div>
+    <div class="dp-card"><div class="dp-lbl">52W Low</div><div class="dp-val red">${d.low52 ? '$' + parseFloat(d.low52).toLocaleString() : '—'}</div></div>
+  `;
+  // News
+  const newsEl = document.getElementById('dp-news');
+  if (d.news && d.news.length) {
+    newsEl.innerHTML = d.news.map(n => {
+      const sent = n.sentiment || 'neutral';
+      const sentCls = sent === 'positive' ? 'ns-pos' : sent === 'negative' ? 'ns-neg' : 'ns-neu';
+      const sentLbl = sent === 'positive' ? '+ POS' : sent === 'negative' ? '- NEG' : '~ NEU';
+      return `<div class="news-item"><span class="news-sentiment ${sentCls}">${sentLbl}</span><div class="news-text"><a href="${n.url}" target="_blank">${n.headline}</a><div class="news-time">${new Date(n.datetime * 1000).toLocaleDateString('th-TH')}</div></div></div>`;
+    }).join('');
+  } else { newsEl.innerHTML = '<div style="color:var(--txt3);font-size:12px">ไม่พบข่าวล่าสุด</div>'; }
+
+  // Analyst
+  if (d.analyst) {
+    document.getElementById('dp-analyst-wrap').style.display = 'block';
+    const a = d.analyst;
+    document.getElementById('dp-analyst').innerHTML = `
+      <div class="analyst-pill ap-buy">Strong Buy: ${a.strongBuy}</div>
+      <div class="analyst-pill ap-buy">Buy: ${a.buy}</div>
+      <div class="analyst-pill ap-hold">Hold: ${a.hold}</div>
+      <div class="analyst-pill ap-sell">Sell: ${a.sell}</div>
+      <div class="analyst-pill ap-sell">Strong Sell: ${a.strongSell}</div>`;
+  }
+}
+
+// ── AUTO FILL ──
+function fillFromData() {
+  const d = liveData;
+  const set = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; };
+  set('f-name', d.symbol); set('f-mcap', d.mcap); set('f-exchange', d.exchange || '');
+  set('f-price', d.price); set('f-chg24', d.change24 ? d.change24 + '%' : '');
+  set('f-52h', d.high52); set('f-52l', d.low52);
+  set('f-ath', d.ath || ''); set('f-circ', d.circSupply || '');
+  set('f-total-supply', d.totalSupply || '');
+  set('f-rsi', d.rsi || ''); set('f-vol', d.vol24 || '');
+  if (document.getElementById('f-type')) document.getElementById('f-type').value = d.type || 'crypto';
+  autoFillMacro();
+  // Fill news section
+  if (d.news && d.news.length) {
+    const newsSecEl = document.getElementById('news-section-display');
+    newsSecEl.innerHTML = d.news.slice(0, 4).map(n => {
+      const sent = n.sentiment || 'neutral';
+      const sentCls = sent === 'positive' ? 'ns-pos' : sent === 'negative' ? 'ns-neg' : 'ns-neu';
+      return `<div class="news-item" style="margin-bottom:6px"><span class="news-sentiment ${sentCls}">${sent === 'positive' ? '+' : sent === 'negative' ? '-' : '~'}</span><div class="news-text"><a href="${n.url}" target="_blank">${n.headline}</a></div></div>`;
+    }).join('');
+  }
+  if (d.analyst) {
+    const aEl = document.getElementById('analyst-section-display');
+    const a = d.analyst;
+    aEl.innerHTML = `<div class="analyst-wrap"><div class="analyst-pill ap-buy">Buy: ${a.strongBuy + a.buy}</div><div class="analyst-pill ap-hold">Hold: ${a.hold}</div><div class="analyst-pill ap-sell">Sell: ${a.sell + a.strongSell}</div></div>`;
+  }
+  document.getElementById('sc-name').textContent = (d.name || d.symbol || '—') + ' (' + (d.symbol || '') + ')';
+  document.getElementById('sc-meta').innerHTML = `<span>${d.type || '—'}</span><span>Price: $${parseFloat(d.price || 0).toLocaleString()}</span><span>RSI: ${d.rsi || '—'}</span>`;
+  document.getElementById('score-hdr').style.display = 'block';
+  showToast('✓ AUTO-FILLED — ' + (d.symbol || ''));
+}
+
+function autoFillMacro() {
+  const set = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+  set('f-fg', liveData.fg ? liveData.fg + ' (' + liveData.fgLbl + ')' : '');
+  set('f-btcdom', liveData.btcDom || '');
+  set('f-btcchg', liveData.btcChg ? liveData.btcChg + '%' : '');
+  set('f-eurusd', liveData.eurusd || '');
+}
+
+// ── FORM HELPERS ──
+function sigGroup(group, el) {
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(b => b.classList.remove('on'));
+  el.classList.add('on'); sigState[group] = el.dataset.val;
+  updateScore(); updateVerdict();
+}
+
+function setRating(key, val) {
+  ratings[key] = val;
+  const wrap = document.getElementById('r-' + key);
+  if (wrap) wrap.querySelectorAll('.star').forEach(s => s.classList.toggle('on', parseInt(s.dataset.val) <= val));
+  const lbl = document.getElementById('rl-' + key);
+  if (lbl) lbl.textContent = RATING_LABELS[val] || '';
+  updateScore(); updateTabStatus();
+}
+
+function toggleChk(el, group, idx) {
+  el.classList.toggle('checked');
+  if (!chkState[group]) chkState[group] = {};
+  chkState[group][idx] = el.classList.contains('checked');
+  updateScore(); updateTabStatus();
+}
+
+// ── SCORE ──
+function calcScore() {
+  let s = 0;
+  ['macro', 'fund', 'ta', 'sent', 'final'].forEach(k => { s += (ratings[k] || 0) * 4; });
+  ['moat', 'ta', 'risk'].forEach(g => { s += Object.values(chkState[g] || {}).filter(Boolean).length * 3; });
+  return Math.min(120, s);
+}
+
+function updateScore() {
+  const s = calcScore();
+  const el = document.getElementById('sc-score');
+  if (el) { el.textContent = s; el.style.color = s >= 80 ? 'var(--grn)' : s >= 55 ? 'var(--gold)' : 'var(--red)'; }
+  renderScoreGauge(s);
+  updateTabStatus();
+}
+
+function renderScoreGauge(s) {
+  const el = document.getElementById('score-gauge');
+  if (!el) return;
+  const c = s >= 80 ? 'var(--grn)' : s >= 55 ? 'var(--gold)' : 'var(--red)';
+  const lbl = s >= 90 ? 'Strong Buy Zone' : s >= 70 ? 'Potential Entry' : s >= 50 ? 'Watchlist' : 'Avoid';
+  const cats = [
+    { lbl: 'Macro', val: (ratings.macro || 0) * 20 },
+    { lbl: 'Fundamentals', val: (ratings.fund || 0) * 20 },
+    { lbl: 'Technical', val: (ratings.ta || 0) * 20 },
+    { lbl: 'Sentiment', val: (ratings.sent || 0) * 20 },
+  ];
+  el.innerHTML = `
+    <div class="gauge-circle" style="border-color:${c}"><div class="gauge-val" style="color:${c}">${s}</div><div class="gauge-max">/ 120</div></div>
+    <div class="gauge-bars">
+      <div style="font-size:12px;font-weight:800;color:${c};margin-bottom:8px">${lbl}</div>
+      ${cats.map(cat => `<div class="gb-row"><div class="gb-top"><span style="font-size:10px;color:var(--txt3)">${cat.lbl}</span><span style="font-size:11px;font-weight:700;color:${cat.val >= 80 ? 'var(--grn)' : cat.val >= 50 ? 'var(--gold)' : 'var(--red)'}">${cat.val}%</span></div><div class="gb-bg"><div class="gb-fill" style="width:${cat.val}%;background:${cat.val >= 80 ? 'var(--grn)' : cat.val >= 50 ? 'var(--gold)' : 'var(--red)'}"></div></div></div>`).join('')}
+    </div>`;
+}
+
+function updateVerdict() {
+  const s = calcScore(), dec = sigState['decision'];
+  const el = document.getElementById('verdict-banner');
+  if (!el) return;
+  if (!dec && s === 0) { el.innerHTML = ''; return; }
+  const label = dec ? { strong_buy: '🚀 Strong Buy', buy: '✅ Buy', watch: '👀 Watchlist', avoid: '⛔ Avoid', short: '📉 Short' }[dec] : (s >= 80 ? '🚀 Strong Signal' : s >= 60 ? '📈 Potential' : s >= 45 ? '👀 Watch' : '⛔ Weak');
+  const cls = ['strong_buy', 'buy'].includes(dec) || (!dec && s >= 60) ? 'bull' : ['avoid', 'short'].includes(dec) || (!dec && s < 45) ? 'bear' : 'neutral';
+  el.innerHTML = `<div class="verdict ${cls}">${label} — Score: ${s}/120</div>`;
+}
+
+// ── TABS ──
+function buildTabs() {
+  const container = document.getElementById('sec-tabs');
+  container.innerHTML = SEC_LABELS.map((l, i) =>
+    `<button class="stab${i === 0 ? ' on' : ''}" id="stab-${i}" onclick="goSec(${i})"><span class="sdot"></span>${l}</button>`
+  ).join('');
+}
+
+function updateTabStatus() {
+  const pb = document.getElementById('sc-prog');
+  for (let i = 0; i < TOTAL_SECS; i++) {
+    const tab = document.getElementById('stab-' + i);
+    if (!tab) continue;
+    const isDone = i < currentSec;
+    tab.className = 'stab' + (i === currentSec ? ' on' : '') + (isDone ? ' done' : '');
+  }
+  if (pb) pb.innerHTML = SEC_LABELS.map((_, i) => `<div class="sc-pb ${i < currentSec ? 'done' : i === currentSec ? 'partial' : ''}"></div>`).join('');
+}
+
+function goSec(n) {
+  document.querySelectorAll('.sec-page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.stab').forEach(t => t.classList.remove('on'));
+  document.getElementById('sp-' + n).classList.add('on');
+  document.getElementById('stab-' + n)?.classList.add('on');
+  currentSec = n;
+  if (n === 6) renderScoreGauge(calcScore());
+  updateTabStatus(); updateVerdict();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── NEW DD ──
+function newDD() {
+  currentDD = { id: Date.now(), createdAt: today() };
+  Object.keys(sigState).forEach(k => delete sigState[k]);
+  Object.keys(ratings).forEach(k => delete ratings[k]);
+  Object.keys(chkState).forEach(k => delete chkState[k]);
+  document.querySelectorAll('#pg-dd input:not([type=hidden]), #pg-dd textarea, #pg-dd select').forEach(el => { if (el.tagName === 'SELECT') el.selectedIndex = 0; else el.value = ''; });
+  document.querySelectorAll('.sig-btn').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.star').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.chk-item').forEach(c => c.classList.remove('checked'));
+  document.querySelectorAll('.rating-lbl').forEach(l => l.textContent = 'ยังไม่ได้ให้คะแนน');
+  document.getElementById('news-section-display').innerHTML = '';
+  document.getElementById('analyst-section-display').innerHTML = '';
+  document.getElementById('data-preview').style.display = 'none';
+  document.getElementById('sym-input').value = '';
+  liveData = { ...liveData.fg !== undefined ? { fg: liveData.fg, fgLbl: liveData.fgLbl, btcDom: liveData.btcDom, btcChg: liveData.btcChg, btcPrice: liveData.btcPrice, eurusd: liveData.eurusd } : {} };
+  document.getElementById('pg-home').style.display = 'none';
+  document.getElementById('pg-dd').style.display = 'block';
+  document.getElementById('search-wrap').style.display = 'block';
+  document.getElementById('score-hdr').style.display = 'none';
+  document.getElementById('sec-nav').style.display = 'block';
+  buildTabs(); goSec(0); updateScore();
+}
+
+// ── SHOW HOME ──
+function showHome() {
+  document.getElementById('pg-dd').style.display = 'none';
+  document.getElementById('pg-home').style.display = 'block';
+  document.getElementById('search-wrap').style.display = 'none';
+  document.getElementById('score-hdr').style.display = 'none';
+  document.getElementById('sec-nav').style.display = 'none';
+  document.getElementById('verdict-banner').innerHTML = '';
+  renderHistList();
+}
+
+// ── SAVE ──
+function saveDD() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { showToast('กรุณาใส่ Symbol ก่อน'); goSec(0); return; }
+  const vals = (id) => { const el = document.getElementById(id); return el ? el.value : ''; };
+  const data = {
+    id: currentDD.id, createdAt: currentDD.createdAt,
+    name, type: vals('f-type'), mcap: vals('f-mcap'), exchange: vals('f-exchange'),
+    price: vals('f-price'), change24: vals('f-chg24'), high52: vals('f-52h'), low52: vals('f-52l'),
+    rsi: vals('f-rsi'), macroNotes: vals('f-macro-notes'), usecase: vals('f-usecase'),
+    competitors: vals('f-competitors'), catalysts: vals('f-catalysts'),
+    riskNotes: vals('f-risk-notes'), bullCase: vals('f-bull-case'), bearCase: vals('f-bear-case'),
+    summary: vals('f-summary'), entryPlan: vals('f-entry-plan'), slPlan: vals('f-sl-plan'), tpPlan: vals('f-tp-plan'),
+    decision: sigState['decision'] || '', cycle: sigState['cycle'] || '',
+    trend: sigState['trend'] || '', sentiment: sigState['sent'] || '',
+    riskOv: sigState['risk-ov'] || '', ratings: { ...ratings },
+    chkState: JSON.parse(JSON.stringify(chkState)), score: calcScore(),
+  };
+  const idx = ddList.findIndex(d => d.id === data.id);
+  if (idx >= 0) ddList[idx] = data; else ddList.push(data);
+  localStorage.setItem('tradeos_dd2_v1', JSON.stringify(ddList));
+  showToast('✓ DD SAVED — ' + name);
+  showHome();
+}
+
+// ── HIST LIST ──
+function renderHistList() {
+  const list = document.getElementById('hist-list'), empty = document.getElementById('hist-empty');
+  if (!ddList.length) { list.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  const dm = { strong_buy: '🚀 Strong Buy', buy: '✅ Buy', watch: '👀 Watch', avoid: '⛔ Avoid', short: '📉 Short' };
+  const dc = { strong_buy: 'ht-bull', buy: 'ht-bull', watch: 'ht-neu', avoid: 'ht-bear', short: 'ht-bear' };
+  list.innerHTML = [...ddList].reverse().map(d => `
+    <div class="hist-item" onclick="loadDD(${d.id})">
+      <div class="hist-top">
+        <div class="hist-name">${d.name}</div>
+        <span class="htag ht-gray">${fmtD(d.createdAt)}</span>
+      </div>
+      <div class="hist-meta">
+        <span class="htag ht-gray">${(d.type || '').toUpperCase()}</span>
+        <span class="htag ${dc[d.decision] || 'ht-gray'}">${dm[d.decision] || '—'}</span>
+        <span class="htag ht-gray">Score: ${d.score || 0}/120</span>
+        ${d.price ? `<span class="htag ht-gray">$${parseFloat(d.price).toLocaleString()}</span>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+// ── LOAD DD ──
+function loadDD(id) {
+  const d = ddList.find(x => x.id === id);
+  if (!d) return;
+  currentDD = { id: d.id, createdAt: d.createdAt };
+  Object.keys(sigState).forEach(k => delete sigState[k]);
+  Object.keys(ratings).forEach(k => delete ratings[k]);
+  Object.keys(chkState).forEach(k => delete chkState[k]);
+  document.getElementById('pg-home').style.display = 'none';
+  document.getElementById('pg-dd').style.display = 'block';
+  document.getElementById('search-wrap').style.display = 'block';
+  document.getElementById('sec-nav').style.display = 'block';
+  document.getElementById('score-hdr').style.display = 'block';
+  buildTabs(); goSec(0);
+  const set = (id, v) => { const el = document.getElementById(id); if (el && v !== undefined) el.value = v; };
+  set('f-name', d.name); set('f-type', d.type); set('f-mcap', d.mcap); set('f-exchange', d.exchange);
+  set('f-price', d.price); set('f-chg24', d.change24); set('f-52h', d.high52); set('f-52l', d.low52);
+  set('f-rsi', d.rsi); set('f-macro-notes', d.macroNotes); set('f-usecase', d.usecase);
+  set('f-competitors', d.competitors); set('f-catalysts', d.catalysts);
+  set('f-risk-notes', d.riskNotes); set('f-bull-case', d.bullCase); set('f-bear-case', d.bearCase);
+  set('f-summary', d.summary); set('f-entry-plan', d.entryPlan); set('f-sl-plan', d.slPlan); set('f-tp-plan', d.tpPlan);
+  const restoreSig = (g, v) => { if (!v) return; sigState[g] = v; document.querySelectorAll(`[data-group="${g}"]`).forEach(b => b.classList.toggle('on', b.dataset.val === v)); };
+  restoreSig('cycle', d.cycle); restoreSig('trend', d.trend); restoreSig('sent', d.sentiment);
+  restoreSig('risk-ov', d.riskOv); restoreSig('decision', d.decision);
+  if (d.ratings) Object.entries(d.ratings).forEach(([k, v]) => setRating(k, v));
+  if (d.chkState) {
+    Object.entries(d.chkState).forEach(([g, items]) => {
+      chkState[g] = items;
+      Object.entries(items).forEach(([idx, checked]) => {
+        if (!checked) return;
+        const cl = document.getElementById(g + '-chk');
+        if (cl) { const item = cl.querySelectorAll('.chk-item')[parseInt(idx)]; if (item) item.classList.add('checked'); }
+      });
+    });
+  }
+  document.getElementById('sc-name').textContent = d.name;
+  document.getElementById('sc-meta').innerHTML = `<span>${d.type || '—'}</span><span>Score: ${d.score}/120</span>`;
+  updateScore(); updateTabStatus();
+}
+
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2400); }
+
+// INIT
+showHome();
+loadMarketOverview();
+setInterval(loadMarketOverview, 60000);
+</script>
+</body>
+</html>
